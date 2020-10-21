@@ -220,31 +220,36 @@ function setupPlayers(player1) {
 		for(let i=0; i<carrierNum; ++i) {
 			p1.ships[i] = new Ship(i, 'carrier', 5, Math.floor(Math.random()*2), true); //create aircraft carrier
 			p1.ships[i].placeShip(p1.grid); //place aircraft carrier
-			total++;
 		}
+		total += carrierNum;
+
 		//for all of the battleships
 		for(let i=0; i<battleNum; ++i) {
 			p1.ships[total+i] = new Ship(total+i, 'battleship', 4, Math.floor(Math.random()*2), true); //create battleship
 			p1.ships[total+i].placeShip(p1.grid); //place battleship
-			total++;
 		}
+		total += battleNum;
+
 		//for all of the cruiser
 		for(let i=0; i<cruiserNum; ++i) {
 			p1.ships[total+i] = new Ship(total+i, 'cruiser', 3, Math.floor(Math.random()*2), true); //create cruiser
 			p1.ships[total+i].placeShip(p1.grid); //place cruiser
-			total++;
 		}
+		total += cruiserNum;
+
 		//for all of the submarine
 		for(let i=0; i<subNum; ++i) {
 			p1.ships[total+i] = new Ship(total+i, 'submarine', 3, Math.floor(Math.random()*2), true); //create submarine
 			p1.ships[total+i].placeShip(p1.grid); //place submarine
-			total++;
 		}
+		total += subNum;
+
 		//for all of the destroyer
 		for(let i=0; i<destroyerNum; ++i) {
 			p1.ships[total+i] = new Ship(total+i, 'destroyer', 2, Math.floor(Math.random()*2), true); //create destroyer
 			p1.ships[total+i].placeShip(p1.grid); //place destroyer
 		}
+		total = 0;
 	}
 	//if player 2
 	else {
@@ -253,26 +258,31 @@ function setupPlayers(player1) {
 		for(let i=0; i<carrierNum; ++i) {
 			p2.ships[i] = new Ship(i, 'carrier', 5, Math.floor(Math.random()*2), false); //create aircraft carrier
 			p2.ships[i].placeShip(p2.grid); //place aircraft carrier
-			total++;
 		}
+		total += carrierNum;
+
 		//for all of the battleships
 		for(let i=0; i<battleNum; ++i) {
+			total = carrierNum;
 			p2.ships[total+i] = new Ship(total+i, 'battleship', 4, Math.floor(Math.random()*2), false); //create battleship
 			p2.ships[total+i].placeShip(p2.grid); //place battleship
-			total++;
 		}
+		total += battleNum;
+
 		//for all of the cruiser
 		for(let i=0; i<cruiserNum; ++i) {
 			p2.ships[total+i] = new Ship(total+i, 'cruiser', 3, Math.floor(Math.random()*2), false); //create cruiser
 			p2.ships[total+i].placeShip(p2.grid); //place cruiser
-			total++;
 		}
+		total += cruiserNum;
+
 		//for all of the submarine
 		for(let i=0; i<subNum; ++i) {
 			p2.ships[total+i] = new Ship(total+i, 'submarine', 3, Math.floor(Math.random()*2), false); //create submarine
 			p2.ships[total+i].placeShip(p2.grid); //place submarine
-			total++;
 		}
+		total += subNum;
+
 		//for all of the destroyer
 		for(let i=0; i<destroyerNum; ++i) {
 			p2.ships[total+i] = new Ship(total+i, 'destroyer', 2, Math.floor(Math.random()*2), false); //create destroyer
@@ -359,7 +369,6 @@ function computerMove() {
 					let dn = (y<gridy-1 && p1.grid[y+1][x][0]<=1);
 					let lt = (x>0 && p1.grid[y][x-1][0]<=1);
 					let rt = (x<gridx-1 && p1.grid[y][x+1][0]<=1);
-					console.log(p1.grid);
 					//look for two hits in a row first
 					if(pass == 0) {
 						let hup = (y>0 && p1.grid[y-1][x][0]==2);
@@ -387,8 +396,8 @@ function computerMove() {
 	if (!selected) {
 		//loop until selected coordinates is water or ship
 		do{
-			sy = Math.floor(Math.random() * gridy);
-			sx = Math.floor(Math.random() * gridx/2)*2+sy%2;
+			sy = Math.floor(Math.random() * (gridy-1));
+			sx = Math.floor(Math.random() * (gridx-1)/2)*2+sy%2;
 		} while(p1.grid[sy][sx][0]>1);
 	}
 	//hit
