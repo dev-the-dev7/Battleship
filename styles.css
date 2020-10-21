@@ -1,0 +1,362 @@
+﻿/*Copyright © 2020 Devin Vella*/
+/*
+This file is part of Battleship.
+
+Battleship is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Battleship is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Battleship. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+*, *::after, *::before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+:root {
+	--cell-size: 20px;
+	--mark-size: calc(var(--cell-size) * .8)
+}
+
+header {
+	background-image: url("./assets/battleship_header.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 80px;
+	width: 80%;
+	min-width: 480px;
+	margin: 0 auto;
+	margin-top: 8px;
+	padding: auto;
+	padding-left: 20px;
+	padding-top: 10px;
+	border: 5px solid black;
+	border-radius: 30px 30px 5px 5px;
+	color: black;
+	font-size: 1.3em;
+	text-decoration: underline overline; 
+}
+
+footer {
+	color: white;
+	background-image: linear-gradient(#195e5e, #004545);
+	font-size: .7em;
+	text-align: center;
+	padding: 10px;
+	border-top: 2px solid black;
+}
+
+footer ul {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+		-ms-flex-pack: center;
+			justify-content: center;
+	list-style-type: none;
+	-webkit-padding-start: 0;
+		padding-inline-start: 0;
+	margin: 0;
+}
+
+footer ul li {
+	padding: .2em .5em;
+}
+
+footer ul li i {
+	font-size: 1.4em;
+	color: white;
+}
+
+body
+{
+	font-family: Verdana, Arial, Comic Sans MS;
+	background-image: url("./assets/background.jpg");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-color: #7a7a7a;
+	margin: 0;
+}
+
+.row {
+	display: -webkit-flex;
+	display: flex;
+	justify-content: space-around;
+	align-items: space-around;
+	width: 80%;
+	height: auto;
+	margin: 15px auto;
+}
+
+.col-left,
+.col-mid,
+.col-right {
+	background-color: rgba(0, 0, 0, .4);
+	border: 5px solid black;
+	text-align: center;
+	margin: 0 10px;
+	padding: 5px;
+}
+
+.col-left,
+.col-right {
+	-webkit-flex: 1;
+	-ms-flex: 1;
+	flex: 1;
+	min-width: 200px;
+}
+
+.col-mid {
+	-webkit-flex: auto;
+	-ms-flex: auto;
+	flex: auto;
+}
+
+table {
+	margin: 10px auto;
+	border-collapse: collapse;
+	/*
+	background-image: url(./assets/water.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 300px 300px; */
+}
+
+caption {
+	margin-left: var(--cell-size);
+}
+
+th {
+	
+}
+
+th, td {
+	width: var(--cell-size);
+	height: var(--cell-size);
+	vertical-align: center;
+	text-align: center;
+	position: relative;
+	min-width: 20px;
+}
+
+td {
+	background-color: blue;
+	border: 1px solid black;
+	cursor: pointer;
+}
+
+td.x,
+td.ship,
+#ocean-grid td,
+.on-off td{
+	cursor: not-allowed;
+}
+
+#target-grid:not(.on-off)#target-grid td:not(.x):not(.ship):hover {
+	background-color: #0080ff;
+}
+
+td.x::before,
+td.x::after {
+	content: '';
+	position: absolute;
+	left: 8px;
+	top: 3px;
+	width: calc(var(--mark-size) * .15);
+	height: var(--mark-size);
+	background-color: black;
+	color: black;
+}
+
+td.x::before {
+	transform: rotate(45deg);
+}
+
+td.x::after {
+	transform: rotate(-45deg);
+}
+
+td.ship {
+	background-color: #818181;
+}
+
+.hit {
+	border-radius: 50%;
+	width: var(--mark-size);
+	height: var(--mark-size);
+	background-color: red;
+	margin: auto;
+}
+
+td.sunk {
+	background-color: red;
+}
+
+.ply-card {
+	background-color: #004545;
+	border-radius: 30px 5px 5px 30px;
+	height: auto;
+	padding: 10px;
+	margin: 10px auto;
+	text-align: left;
+	font-size: 1.2em;
+}
+
+.ply-card img{
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
+	vertical-align: middle;
+}
+
+button {
+	cursor: pointer;
+	color: #142850;
+	background-color: #DDD;
+	width: 100%;
+	font-size: 1em;
+	text-decoration: none;
+	padding: 10px 5px;
+	border-radius: 5px;
+}
+
+button:hover {
+	background-color: #0c7b93;
+}
+
+.online { grid-area: online; }
+.offline { grid-area: offline; }
+.settings { grid-area: settings; }
+.surrender { grid-area: surrender; }
+.restart { grid-area: restart; }
+.quit { grid-area: quit; }
+
+
+.btn-group {
+	display: -webkit-grid;
+	display: inline-grid;
+	gap: 20px 10px;
+	grid-template-columns: auto auto;
+	grid-template-areas:
+		'host join'
+		'settings settings'
+		'surrender surrender'
+		'restart quit';
+	margin: 5px auto;
+}
+
+.setting-screen {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, .9);
+	justify-content: center;
+	align-items: center;
+	color: white;
+	font-size: 1rem;
+	flex-direction: column;
+}
+
+.setting-screen h2{
+	background-color: black;
+	border: 1px solid white;
+	border-radius: 20px 20px 5px 5px;
+	padding: 5px;
+}
+
+.setting-screen.show {
+	display: flex;
+}
+
+.setting-item {
+	display: flex;
+	justify-content: flex-end;
+	width: 270px;
+}
+
+.setting-item p{
+	margin: auto 10px;
+	font-size: 1.4rem;
+	font-weight: bold;
+	background-color: black;
+	border: 1px solid white;
+	padding: 5px;
+}
+
+.setting-item button {
+	font-size: 1rem;
+	background-color: white;
+	border: 1px solid black;
+	padding: .25em .5em;
+	width: 30px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.setting-item button:hover {
+	color: white;
+	background-color: black;
+	border-color: white;
+}
+
+button.on-off,
+.setting-item button.on-off,
+.setting-item button.on-off:hover {
+	background-color: #808080;
+	color: black;
+	border-color: #808080;
+	cursor: default;
+}
+
+.setting-item button #close {
+	justify-content: flex-start;
+	padding: .25em .5em;
+	width: 30px;
+}
+
+#row-,
+#col-,
+#car-,
+#batle-,
+#cru-,
+#sub-,
+#des- {
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+@media screen and (max-width: 750px) {
+	.col-left {
+		display: none;
+	}
+}
+
+.wait-message {
+	display: block;
+	font-size: 3rem;
+}
+
+.wait-dot1 {
+	display: none;
+}
+
+.wait-dot2 {
+	display: none;
+}
+
+.wait-dot3 {
+	display: none;
+}
