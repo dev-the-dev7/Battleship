@@ -3,7 +3,7 @@
 ![release](https://img.shields.io/badge/release-1.0.0-orange)
 
 > Note:
-I plan to add an online function soon, so some buttons have no use as of yet. I'm using this project as a learning experience, so I will not be accepting any push requests until I finish the online section. I want to be able to do this on my own, so please bear with me until that part is complete. There are more features I plan to add, like being able to place your own ships, but I want to make sure the online is done first as I want to get familiar with writing server-side code.
+I plan to add an online function soon, so some buttons have no use as of yet. I'm using this project as a learning experience, so I will not be accepting any pull requests until I finish the online section. I want to be able to do this on my own, so please bear with me until that part is complete. There are more features I plan to add, like being able to place your own ships, but I want to make sure the online is done first as I want to get familiar with writing server-side code.
 
 **Battleship** is a 2-player board game where each player gets their own ships to place on their ocean grid. They're five different types of ships, each taking up a different amount of space on the grid. Each player takes shots at each other's ships without knowing the location of their opponent's ships. If all the parts of a ship are hit, the ship sinks. The object of the game is to sink all of your opponent's ships before they sink yours. You can customize your game by increasing the size of the grids and the number of ships each player has. You can also view game statistics, including wins, losses, win rate, and accuracy.
 
