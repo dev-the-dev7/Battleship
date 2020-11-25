@@ -97,7 +97,8 @@ body
 
 .col-left,
 .col-mid,
-.col-right {
+.col-right,
+.ships-container {
 	background-color: rgba(0, 0, 0, .4);
 	border: 5px solid black;
 	text-align: center;
@@ -111,6 +112,12 @@ body
 	-ms-flex: 1;
 	flex: 1;
 	min-width: 200px;
+}
+
+.col-left button{
+	width: 45px;
+	font-size: .6em;
+	padding: 2px;
 }
 
 .col-mid {
@@ -133,10 +140,6 @@ caption {
 	margin-left: var(--cell-size);
 }
 
-th {
-	
-}
-
 th, td {
 	width: var(--cell-size);
 	height: var(--cell-size);
@@ -155,11 +158,11 @@ td {
 td.x,
 td.ship,
 #ocean-grid td,
-.on-off td{
+.off td{
 	cursor: not-allowed;
 }
 
-#target-grid:not(.on-off)#target-grid td:not(.x):not(.ship):hover {
+#target-grid:not(.off)#target-grid td:not(.x):not(.ship):hover {
 	background-color: #0080ff;
 }
 
@@ -187,7 +190,7 @@ td.ship {
 	background-color: #818181;
 }
 
-.hit {
+.fire {
 	border-radius: 50%;
 	width: var(--mark-size);
 	height: var(--mark-size);
@@ -253,7 +256,7 @@ button:hover {
 }
 
 .setting-screen {
-	display: none;
+	display: flex;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -272,10 +275,6 @@ button:hover {
 	border: 1px solid white;
 	border-radius: 20px 20px 5px 5px;
 	padding: 5px;
-}
-
-.setting-screen.show {
-	display: flex;
 }
 
 .setting-item {
@@ -309,9 +308,9 @@ button:hover {
 	border-color: white;
 }
 
-button.on-off,
-.setting-item button.on-off,
-.setting-item button.on-off:hover {
+button.off,
+.setting-item button.off,
+.setting-item button.off:hover {
 	background-color: #808080;
 	color: black;
 	border-color: #808080;
@@ -335,25 +334,51 @@ button.on-off,
 	transform: rotate(180deg);
 }
 
+.hide {
+	display: none;
+}
+
+.ship-placement-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin: 5px 15px;
+}
+
+.ship-container {
+	display: inline-flex;
+	justify-content: flex-end;
+	background-color:grey;
+	height: min-content;
+	width: min-content;
+	margin: 5px;
+}
+
+.ship-container div {
+	width: var(--cell-size);
+	height: var(--cell-size);
+	border: 1px solid black
+}
+
+.ship-container.off {
+	opacity: .4;
+}
+
+.horizontal {
+	flex-direction: row;
+	align-items: flex-end;
+}
+
+.vertical {
+	flex-direction: column;
+}
+
+.drag-over {
+	background-color: #0080ff;
+}
+
 @media screen and (max-width: 750px) {
 	.col-left {
 		display: none;
 	}
-}
-
-.wait-message {
-	display: block;
-	font-size: 3rem;
-}
-
-.wait-dot1 {
-	display: none;
-}
-
-.wait-dot2 {
-	display: none;
-}
-
-.wait-dot3 {
-	display: none;
 }
