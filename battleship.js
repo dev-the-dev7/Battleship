@@ -1,4 +1,4 @@
-//Copyright © 2020 Devin Vella
+//Copyright ï¿½ 2020 Devin Vella
 /*
 This file is part of Battleship.
 
@@ -16,10 +16,78 @@ You should have received a copy of the GNU General Public License
 along with Battleship. If not, see <https://www.gnu.org/licenses/>.
 */
 
-let p1, p2, stats, gridx=10, gridy=10, playflag=false, online=false,
-shipNum, carrierNum=1, battleNum=1, cruiserNum=1, subNum=1, destroyerNum=1;
+const placementContainer = document.querySelector('.ship-placement-container');
+const shipContainer = document.querySelector('.ship-container');
+const carrier = document.querySelector('.carrier');
+const battleship = document.querySelector('.battleship');
+const cruiser = document.querySelector('.cruiser');
+const submarine = document.querySelector('.submarine');
+const destroyer = document.querySelector('.destroyer');
+const placementShips = [carrier, battleship, cruiser, submarine, destroyer];
+const btnRandom = document.getElementById('btnRandom');
+const btnRotate = document.getElementById('btnRotate');
+const btnReset = document.getElementById('btnReset');
+const btnConfirm = document.getElementById('btnConfirm');
 
-start();
+const targetGrid = document.getElementById('target-grid');
+const oceanGrid = document.getElementById('ocean-grid');
+
+const btnClose = document.getElementById('close');
+const btnHost = document.getElementById('btnHost');
+const btnJoin = document.getElementById('btnJoin');
+const btnSettings = document.getElementById('btnSettings');
+const btnSur = document.getElementById('btnSur');
+const btnNewGame = document.getElementById('btnNewGame');
+const btnQuit = document.getElementById('btnQuit');
+
+const settingsScreen = document.querySelector('.setting-screen');
+const lblCol = document.getElementById('col');
+const btnColAdd = document.getElementById('col+');
+const btnColSub = document.getElementById('col-');
+const lblRow = document.getElementById('row');
+const btnRowAdd = document.getElementById('row+');
+const btnRowSub = document.getElementById('row-');
+const lblCar = document.getElementById('car');
+const btnCarAdd = document.getElementById('car+');
+const btnCarSub = document.getElementById('car-');
+const lblBatle = document.getElementById('batle');
+const btnBatleAdd = document.getElementById('batle+');
+const btnBatleSub = document.getElementById('batle-');
+const lblCru = document.getElementById('cru');
+const btnCruAdd = document.getElementById('cru+');
+const btnCruSub = document.getElementById('cru-');
+const lblSubm = document.getElementById('sub');
+const btnSubmAdd = document.getElementById('sub+');
+const btnSubmSub = document.getElementById('sub-');
+const lblDes = document.getElementById('des');
+const btnDesAdd = document.getElementById('des+');
+const btnDesSub = document.getElementById('des-');
+
+let p1;
+let p2;
+let stats = new Stats;
+let playflag = false;
+let readyflag = false;
+let onlineflag = false;
+let width = 10;
+let length = 10;
+let selectedPart;
+let draggedShip;
+let shipNum;
+let carrierNum = 1;
+let battleNum = 1;
+let cruiserNum = 1;
+let subNum = 1;
+let destroyerNum = 1;
+let shipsPlaced = 0;
+let carriersPlaced = 0;
+let battleshipsPlaced = 0;
+let cruisersPlaced = 0;
+let submarinesPlaced = 0;
+let destroyersPlaced = 0;
+
+buildGrid(targetGrid, false);
+buildGrid(oceanGrid, true);
 
 //stats object
 function Stats() {
@@ -31,15 +99,17 @@ function Stats() {
 	this.accuracy = 0;
 
 	this.addWin = function() {
-		++this.wins;
 		const win = document.getElementById('wins');
+
+		++this.wins;
 		win.innerText = 'Wins: ' + this.wins;
 		this.getwinRate();
 	}
 
 	this.addLoss = function() {
-		++this.losses
 		const los = document.getElementById('losses');
+
+		++this.losses
 		los.innerText = 'Losses: ' + this.losses;
 		this.getwinRate();
 	}
@@ -73,137 +143,68 @@ function Stats() {
 function Player() {
 	this.shipsLeft = shipNum; //set to the number of ships for each player
 	this.ships = []; //store ship objects
-	this.grid = []; //cell type (0:water, 1:ship, 2:hit, 3:miss, 4:sunk), shipid
-
-	let y,x; //grid coordinates
-	//for every item in grid
-	for(y=0;y<gridy;++y) {
-		this.grid[y] = [];
-		for(x=0;x<gridx;++x) {
-			this.grid[y][x] = [0, -1]; //fill cell with water 
-		}
-	}
+	this.tiles = []; //store grid cells
 }
 
 //ship object
-function Ship(shipId, shiptype, len, align, player1) {
+function Ship(shipId, shiptype, len, align) {
 	this.shipId = shipId;
 	this.shiptype = shiptype;
 	this.len = len;
 	this.align = align;
-	this.placeShip = function(grid) {
-		//find empty spot for Ship//
-		let rangex = gridx, rangey = gridy; //range of potential x and y coordinates
-		let offsetx = 0, offsety = 0; //offset x and y coordinates
-		//horzontal alignment
-		if(this.align == 0) {
-			rangex -= len //prevent ship from going off grid
-			++offsetx; //used to place ship horzontally
-		}
-		//vertical alignment
-		else {
-			rangey -= len //prevent ship from going off grid
-			++offsety; //used to place ship vertically
-		}
-		let x, y, i;
-		do {
-			y = Math.floor(Math.random()*rangey); //starting y-coordinates for ship
-			x = Math.floor(Math.random()*rangex); //starting x-coordinates for ship
-			let tx = x, ty = y; //store x and y values temporarily
-			//for the length of the ship
-			for (i=0;i<len;++i) {
-				//if a ship is already at the coordinates get new coordinates
-				if (grid[ty][tx][0] == 1) {
-					break;
-				}
-				//check next cell
-				tx+=offsetx;
-				ty+=offsety;
-			}
-		} while(i != len);
-
-		//build ship//
-		tx = x, ty = y; //reset temp values
-		//for the length of the ship
-		for (let i=0;i<len;++i) {
-			grid[ty][tx][0] = 1; //store ship part
-			grid[ty][tx][1] = shipId; //store shipId
-			if (player1) 
-				updateGrid(ty,tx,1,false); //place ship part
-			//go to next cell
-			tx+=offsetx;
-			ty+=offsety;
-		}
-	}
 }
 
-//setup functions//
-function buildGrids() {
-	let grid, x, y, cap, tr, th, td;
-	grid = document.getElementById('ocean-grid')
+//setup game functions//
+function buildGrid(grid, myGrid) {
 	//add caption
-	cap = document.createElement('caption');
-	cap.innerText = 'YOUR FLEET';
-	grid.appendChild(cap);
-	for(y=-1; y<gridy; ++y) {
-		//add row
-		tr = document.createElement('tr');
-		for(x=-1; x<gridx; ++x) {
-			//x coordinates	heading(A-J)
-			if(y==-1) {
-				let letter = (x+10).toString(36);
-				th = document.createElement('th');
-				if(x==-1) {/* do nothing */}
-				else th.innerText = letter.toUpperCase();
-				tr.appendChild(th);
-			}
-			else {
-				//y coordinates	heading(1-10)
-				if(x==-1) {
-					th = document.createElement('th');
-					th.innerText = y + 1;
-					tr.appendChild(th);
-				}
-				//add cell
-				else {
-					td = document.createElement('td');
-					td.setAttribute('id', 'ply1-cell-'+y+'-'+x);
-					tr.appendChild(td);
-				}
-			}
-		}
-		grid.appendChild(tr);
+	let cap = document.createElement('caption');
+	if(myGrid) {
+		p1 = new Player(); //create new player1 
+		cap.innerText = 'YOUR FLEET';
 	}
-	grid = document.getElementById('target-grid')
-	//add caption
-	cap = document.createElement('caption');
-	cap.innerText = 'ENEMY FLEET';
+	else {
+		p2 = new Player(); //create new player2
+		cap.innerText = 'ENEMY FLEET';
+	}
 	grid.appendChild(cap);
-	for(y=-1; y<gridy; ++y) {
+
+	//add cells
+	for(let y=-1; y<length; ++y) {
 		//add row
-		tr = document.createElement('tr');
-		for(x=-1; x<gridx; ++x) {
+		let tr = document.createElement('tr');
+		for(let x=-1; x<width; ++x) {
 			//x coordinates	heading(A-J)
 			if(y==-1) {
-				let letter = (x+10).toString(36);
-				th = document.createElement('th');
-				if(x==-1) {/* do nothing */}
-				else th.innerText = letter.toUpperCase();
+				let th = document.createElement('th');
+				if(x!=-1) {
+					let letter = (x+10).toString(36);
+					th.innerText = letter.toUpperCase();
+				}
 				tr.appendChild(th);
 			}
 			else {
 				//y coordinates	heading(1-10)
 				if(x==-1) {
-					th = document.createElement('th');
+					let th = document.createElement('th');
 					th.innerText = y + 1;
 					tr.appendChild(th);
 				}
 				//add cell
 				else {
-					td = document.createElement('td');
-					td.setAttribute('id', 'ply2-cell-'+y+'-'+x);
-					//add onClick function
-					td.addEventListener('click', shoot.bind(null, y, x));
+					let td = document.createElement('td');
+					//store element
+					td.id = y*width + x;
+					if(myGrid) { 
+						//add drop listener
+						td.addEventListener('drop', dragDrop.bind(null));
+						td.addEventListener('dragover', allowDrop.bind(null));
+						p1.tiles.push(td);
+					}
+					else {
+						//add onClick listener
+						td.addEventListener('click', shoot.bind(null, td.id));
+						p2.tiles.push(td);
+					}
 					tr.appendChild(td);
 				}
 			}
@@ -211,617 +212,491 @@ function buildGrids() {
 		grid.appendChild(tr);
 	}
 }
-function setupPlayers(player1) {
+
+function createShips(ships) {
 	let total = 0;
-	//if player 1
-	if(player1) {
-		p1 = new Player(); //create new player 
-		//for all of the aircraft carriers
-		for(let i=0; i<carrierNum; ++i) {
-			p1.ships[i] = new Ship(i, 'carrier', 5, Math.floor(Math.random()*2), true); //create aircraft carrier
-			p1.ships[i].placeShip(p1.grid); //place aircraft carrier
-		}
-		total += carrierNum;
+	
+	//for all of the aircraft carriers
+	for(let i=0; i<carrierNum; ++i) ships[i] = new Ship(i, 'carrier', 5, Math.floor(Math.random()*2)); //create aircraft carrier
+	total += carrierNum;
 
-		//for all of the battleships
-		for(let i=0; i<battleNum; ++i) {
-			p1.ships[total+i] = new Ship(total+i, 'battleship', 4, Math.floor(Math.random()*2), true); //create battleship
-			p1.ships[total+i].placeShip(p1.grid); //place battleship
-		}
-		total += battleNum;
+	//for all of the battleships
+	for(let i=0; i<battleNum; ++i) ships[total+i] = new Ship(total+i, 'battleship', 4, Math.floor(Math.random()*2)); //create battleship
+	total += battleNum;
 
-		//for all of the cruiser
-		for(let i=0; i<cruiserNum; ++i) {
-			p1.ships[total+i] = new Ship(total+i, 'cruiser', 3, Math.floor(Math.random()*2), true); //create cruiser
-			p1.ships[total+i].placeShip(p1.grid); //place cruiser
-		}
-		total += cruiserNum;
+	//for all of the cruiser
+	for(let i=0; i<cruiserNum; ++i) ships[total+i] = new Ship(total+i, 'cruiser', 3, Math.floor(Math.random()*2)); //create cruiser
+	total += cruiserNum;
 
-		//for all of the submarine
-		for(let i=0; i<subNum; ++i) {
-			p1.ships[total+i] = new Ship(total+i, 'submarine', 3, Math.floor(Math.random()*2), true); //create submarine
-			p1.ships[total+i].placeShip(p1.grid); //place submarine
-		}
-		total += subNum;
+	//for all of the submarine
+	for(let i=0; i<subNum; ++i) ships[total+i] = new Ship(total+i, 'submarine', 3, Math.floor(Math.random()*2)); //create submarine
+	total += subNum;
 
-		//for all of the destroyer
-		for(let i=0; i<destroyerNum; ++i) {
-			p1.ships[total+i] = new Ship(total+i, 'destroyer', 2, Math.floor(Math.random()*2), true); //create destroyer
-			p1.ships[total+i].placeShip(p1.grid); //place destroyer
-		}
-		total = 0;
-	}
-	//if player 2
-	else {
-		p2 = new Player(); //create new player
-		//for all of the aircraft carriers
-		for(let i=0; i<carrierNum; ++i) {
-			p2.ships[i] = new Ship(i, 'carrier', 5, Math.floor(Math.random()*2), false); //create aircraft carrier
-			p2.ships[i].placeShip(p2.grid); //place aircraft carrier
-		}
-		total += carrierNum;
+	//for all of the destroyer
+	for(let i=0; i<destroyerNum; ++i) ships[total+i] = new Ship(total+i, 'destroyer', 2, Math.floor(Math.random()*2)); //create destroyer
+}
 
-		//for all of the battleships
-		for(let i=0; i<battleNum; ++i) {
-			total = carrierNum;
-			p2.ships[total+i] = new Ship(total+i, 'battleship', 4, Math.floor(Math.random()*2), false); //create battleship
-			p2.ships[total+i].placeShip(p2.grid); //place battleship
+function randomPlacement(ships, grid, player1) {
+	//create ships//
+	createShips(ships);
+		
+	//empty grid//
+	grid.forEach(tile => {
+		tile.removeAttribute('class'); //remove classes
+		tile.removeAttribute('data-id'); //remove id
+	});
+		
+	//random placement//
+	ships.forEach(ship => {
+		let taken = true, rangex = width, rangey = length, shipArea;
+		//find empty spot for Ship//
+		while (taken) {
+			//get range of allowed placements (prevent ship from going off grid)
+			if (ship.align == 0) rangex -= ship.len //horzontal alignment
+			else rangey -= ship.len //vertical alignment
+			//get random starting point
+			let randomStart = Math.floor(Math.random()*rangey)*width + Math.floor(Math.random()*rangex);
+			//get random starting area
+			if (ship.align == 0) shipArea = grid.slice(randomStart, randomStart+ship.len);
+			else shipArea = grid.filter((v, i) => i % width === randomStart % width && i >= randomStart && i <= (randomStart+width*(ship.len-1)));
+			taken = shipArea.some(tile => tile.classList.contains('taken')); //check if spot is taken
 		}
-		total += battleNum;
+	
+		//build ship//
+		shipArea.forEach(tile => {
+			tile.classList.add('taken'); //reserve space for ship
+			if (player1) tile.classList.add('ship'); //place ship
+			tile.setAttribute('data-id', ship.shipId); //store shipId
+		});
 
-		//for all of the cruiser
-		for(let i=0; i<cruiserNum; ++i) {
-			p2.ships[total+i] = new Ship(total+i, 'cruiser', 3, Math.floor(Math.random()*2), false); //create cruiser
-			p2.ships[total+i].placeShip(p2.grid); //place cruiser
-		}
-		total += cruiserNum;
+		//turn off ships
+		shipsPlaced = shipNum;
+		placementShips.forEach(ship => turnOffShips(ship, shipsPlaced, shipNum));
+	});
+}
 
-		//for all of the submarine
-		for(let i=0; i<subNum; ++i) {
-			p2.ships[total+i] = new Ship(total+i, 'submarine', 3, Math.floor(Math.random()*2), false); //create submarine
-			p2.ships[total+i].placeShip(p2.grid); //place submarine
-		}
-		total += subNum;
+function turnOnShips() {
+	//turn on ship placement
+	placementShips.forEach(ship => {
+		ship.classList.remove('off');
+		ship.setAttribute('draggable', 'true');
+	});
 
-		//for all of the destroyer
-		for(let i=0; i<destroyerNum; ++i) {
-			p2.ships[total+i] = new Ship(total+i, 'destroyer', 2, Math.floor(Math.random()*2), false); //create destroyer
-			p2.ships[total+i].placeShip(p2.grid); //place destroyer
-		}
+	//reset variables
+	shipsPlaced = 0;
+	carriersPlaced = 0;
+	battleshipsPlaced = 0;
+	cruisersPlaced = 0;
+	submarinesPlaced = 0;
+	destroyersPlaced = 0;
+}
+
+function turnOffShips(ship, shipsPlaced, shipNum) {
+	if (shipsPlaced == shipNum) {
+		ship.classList.add('off');
+		ship.removeAttribute('draggable');
 	}
 }
 
-function updateGrid(y,x,celltype,player1) {
-	//player1
-	if(player1) {
-		p2.grid[y][x][0] = celltype; //change opponents cell to match new cell
-		//show updated cell
-		let cell = document.getElementById('ply2-cell-'+y+'-'+x);
-		if(celltype == 1) cell.classList.add('ship');
-		else if(celltype == 2) {
-			cell.classList.add('ship');
-			const div = document.createElement('div')
-			div.classList.add('hit');
-			cell.appendChild(div);
-		}
-		else if(celltype == 3) cell.classList.add('x');
-		else cell.classList.add('sunk');
-	}
-	//player2
-	else {
-		p1.grid[y][x][0] = celltype; //change opponents cell to match new cell
-		//show updated cell
-		let cell = document.getElementById('ply1-cell-'+y+'-'+x);
-		if(celltype == 1) cell.className = 'ship';
-		else if(celltype == 2) {
-			const div = document.createElement('div')
-			div.classList.add('hit');
-			cell.appendChild(div);
-		}
-		else if(celltype == 3) cell.className = 'x';
-		else cell.className = 'sunk';
-	}
+function togglePlacementBtns() {
+	btnRandom.classList.toggle('off');
+	btnRotate.classList.toggle('off');
+	btnReset.classList.toggle('off');
+	btnConfirm.classList.toggle('off');
 }
 
-function shoot(y,x) {
-	const cell = document.getElementById('ply2-cell-'+y+'-'+x);
+//game functions//
+function shoot(index) {
+	let cell = p2.tiles[index]
 	if(playflag && !cell.classList.contains('ship') && !cell.classList.contains('x')) {
 		stats.addShot();
 		//hit
-		if(p2.grid[y][x][0] == 1) {
+		if (cell.classList.contains('taken')) {
 			stats.addHit();
-			updateGrid(y,x,2,true);
-			const shipId = p2.grid[y][x][1];
+			updateGrid(cell,2); //set cell to hit
+			const shipId = cell.getAttribute('data-id');
 			const ship = p2.ships[shipId];
-			//if ship is detroyed
-			if(--ship.len == 0) {
-				sinkShip(p2.grid,shipId,true);
-				alert('You sank my '+ship.shiptype+'!');
-				//todo: show shipsLeft here
-				//if all ships are destroyed end game
-				if (--p2.shipsLeft == 0) {
-					endGame(true);
-				}
-			}
-			if(playflag) {computerMove();} //if game is not over switch turns
+			if (--ship.len == 0) sinkShip(p2,shipId,true); //if ship is detroyed sink ship
+			if(playflag) computerMove(); //if game is not over switch turns
 		}
 		//miss
-		else if(p2.grid[y][x][0] == 0) {
-			updateGrid(y,x,3,true);
+		else {
+			updateGrid(cell,3,true); //set cell to miss
 			computerMove();
 		}
 	}
 }
 
 function computerMove() {
-	let x, y, sx, sy, pass;
-	let selected = false;
-	for (pass=0;pass<2;++pass) {
-		//for every item in the grid while target is not selected
-		for (y=0;y<gridy && !selected;++y) {
-			for (x=0;x<gridx && !selected;++x) {
-				//if coordinates has a hit
-				if (p1.grid[y][x][0] == 2) {
-					sx = x; 
-					sy = y;
-					//if there is a space above coordinates & if the space is water or ship set true
-					let up = (y>0 && p1.grid[y-1][x][0]<=1);
-					let dn = (y<gridy-1 && p1.grid[y+1][x][0]<=1);
-					let lt = (x>0 && p1.grid[y][x-1][0]<=1);
-					let rt = (x<gridx-1 && p1.grid[y][x+1][0]<=1);
-					//look for two hits in a row first
-					if(pass == 0) {
-						let hup = (y>0 && p1.grid[y-1][x][0]==2);
-						let hdn = (y<gridy-1 && p1.grid[y+1][x][0]==2);
-						let hlt = (x>0 && p1.grid[y][x-1][0]==2);
-						let hrt = (x<gridx-1 && p1.grid[y][x+1][0]==2);
-
-						if (lt && hrt) { sx = x-1; selected=true; } //set target to left of hit
-						else if (rt && hlt) { sx = x+1; selected=true; } //set target to right of hit
-						else if (up && hdn) { sy = y-1; selected=true; } //set target above hit
-						else if (dn && hup) { sy = y+1; selected=true; } //set target below hit
-					}
-					//if no other hits are around
-					else {
-						if (lt) { sx = x-1; selected=true; } //set target to left of hit
-						else if (rt) { sx = x+1; selected=true; } //set target to right of hit
-						else if (up) { sy = y-1; selected=true; } //set target above hit
-						else if (dn) { sy = y+1; selected=true; } //set target below hit
-					}
+	let selected = false, index;
+	for (let pass=0;pass<2;++pass) {
+		p1.tiles.forEach((tile, i) => {
+			if (!selected && tile.classList.contains('hit')) {
+				//if there is another cell in the direction set true
+				let up = (i >= width);
+				let dn = (i < width*(length-1));
+				let lt = (!(i % width === 0));
+				let rt = (!((i+(width-1)) % width === (width-1) % width));
+				//if the cell is empty set true
+				let eup = (up && checkIfEmpty(i-width));
+				let edn = (dn && checkIfEmpty(i+width));
+				let elt = (lt && checkIfEmpty(i-1));
+				let ert = (rt && checkIfEmpty(i+1));
+				//look for two hits in a row first
+				if(pass == 0) {
+					//if cell has a hit set true
+					let hup = (up && p1.tiles[i-width].classList.contains('hit'));
+					let hdn = (dn && p1.tiles[i+width].classList.contains('hit'));
+					let hlt = (lt && p1.tiles[i-1].classList.contains('hit'));
+					let hrt = (rt && p1.tiles[i+1].classList.contains('hit'));
+			
+					//select target
+					if (elt && hrt) { index = i-1; selected=true; } //set target to left of hit
+					else if (ert && hlt) { index = i+1; selected=true; } //set target to right of hit
+					else if (eup && hdn) { index = i-width; selected=true; } //set target above hit
+					else if (edn && hup) { index = i+width; selected=true; } //set target below hit
 				}
-			}
-		}
+				//if no other hits are around
+				else {
+					//select target
+					if (elt) { index = i-1; selected=true; } //set target to left of hit
+					else if (ert) { index = i+1; selected=true; } //set target to right of hit
+					else if (eup) { index = i-width; selected=true; } //set target above hit
+					else if (edn) { index = i+width; selected=true; } //set target below hit
+				}
+			}	
+		});
 	}
 	//if no target was selected
 	if (!selected) {
-		//loop until selected coordinates is water or ship
-		do{
-			sy = Math.floor(Math.random() * (gridy-1));
-			sx = Math.floor(Math.random() * (gridx-1)/2)*2+sy%2;
-		} while(p1.grid[sy][sx][0]>1);
+		//loop until selected cell is empty
+		do {
+			let y = Math.floor(Math.random() * length);
+			let x = Math.floor(Math.random() * width/2)*2+y%2;
+			index = y*width + x;
+		} while(!checkIfEmpty(index));
 	}
+	let cell = p1.tiles[index];
+
 	//hit
-	if(p1.grid[sy][sx][0] == 1) {
-		updateGrid(sy,sx,2,false);
-		let shipId = p1.grid[sy][sx][1];
+	if(cell.classList.contains('ship')) {
+		updateGrid(cell,2); //set cell to hit
+		let shipId = cell.getAttribute('data-id');
 		let ship = p1.ships[shipId];
-		//if ship is detroyed
-		if(--ship.len == 0) {
-			sinkShip(p1.grid,shipId,false);
-			alert('I sank your '+ship.shiptype+'!');
-			//if all ships are destroyed
-			if (--p1.shipsLeft == 0) {
-				showShips();
-				endGame(false);
-			}
-		}
+		if(--ship.len == 0) sinkShip(p1,shipId,false); //if ship is detroyed sink ship
 	}
 	//miss
-	else
-		updateGrid(sy,sx,3,false);
+	else updateGrid(cell,3,false); //set cell to miss
+
+	function checkIfEmpty(index) {
+		return !p1.tiles[index].classList.contains('hit') && !p1.tiles[index].classList.contains('x') && !p1.tiles[index].classList.contains('sunk');
+	}
 }
 
-function sinkShip(grid,shipId,player1) {
-  let y,x;
-  //for all of the cells
-  for (y=0;y<gridy;++y) {
-    for (x=0;x<gridx;++x) {
-	  //that the ship occupies
-      if (grid[y][x][1] == shipId)
-		//change image to sunken ship
-        if (player1)
-			updateGrid(y,x,4,true);
-		else
-			updateGrid(y,x,4,false);
-    }
-  }
+function updateGrid(cell, celltype) {
+	if (celltype != 3) cell.classList.add('ship');
+	if (celltype == 2) {
+		cell.classList.add('hit');
+		const div = document.createElement('div')
+		div.classList.add('fire');
+		cell.appendChild(div);
+	}
+	else if (celltype == 3) cell.classList.add('x');
+	else if (celltype == 4) {
+		cell.classList.remove('hit');
+		cell.classList.add('sunk');
+	}
 }
 
-function showShips() {
-  let y,x;
-  //for every item in grid
-  for (y=0;y<gridy;++y) {
-    for (x=0;x<gridx;++x) {	
-		//show ship
-		if (p2.grid[y][x][0] == 1)
-			updateGrid(y,x,1,true);
-    }
-  }
-}
-
-function start() {
-	shipNum = carrierNum + battleNum + cruiserNum + subNum + destroyerNum;
-	buildGrids();
-	stats = new Stats;
+function sinkShip(player, shipId, player1) {
+	//sink each part with shipId
+	player.tiles.forEach(tile => {if (tile.getAttribute('data-id') == shipId) updateGrid(tile,4)});
+	if (player1) alert('You sank my '+player.ships[shipId].shiptype+'!');
+	else alert('I sank your '+player.ships[shipId].shiptype+'!');
+	
+	//if all ships are destroyed end game
+	if (--player.shipsLeft == 0) {
+		if (player1) endGame(true);
+		else endGame(false);
+	}
 }
 
 function endGame(player1) {
-	if(playflag == true) {
-		let btn;
-
+	if (playflag == true) {
 		//turn off grid
-		const grid = document.getElementById('target-grid');
-		grid.classList.toggle('on-off');
+		targetGrid.classList.add('off');
 
+		//end game message
 		playflag = false;
-		if(player1)
-		{
+		if (player1) {
 			stats.addWin();
 			alert('You win!');
 		}
-		else
-		{
+		else {
 			stats.addLoss();
 			alert('I win!');
+			p2.tiles.forEach(tile => {if (tile.classList.contains('taken')) updateGrid(tile,1,)}); //show ships
 		}
 
-		//turn on btnNewGame
-		btn = document.getElementById('btnNewGame');
-		btn.classList.toggle('on-off');
 		//turn off btnSur
-		btn = document.getElementById('btnSur');
-		btn.classList.toggle('on-off');
+		btnSur.classList.add('off');
+		//turn on btnNewGame
+		btnNewGame.classList.remove('off');
 	}
-}
-
-function host() {
-
-}
-
-function join() {
-
 }
 
 function showSettings() {
-	let settingsScreen = document.querySelector('.setting-screen');
-	settingsScreen.classList.toggle('show');
+	if (readyflag == false) settingsScreen.classList.toggle('hide');
 }
 
-function newGame() {
-	if(playflag == false) {
-		let btn, grid;
+function multiplayer(host) {
+
+}
+
+//drop functions//
+function allowDrop(e) {
+	if (readyflag && draggedShip != undefined) e.preventDefault();
+}
+  
+function dragDrop(e) {
+	let shipClass = draggedShip.classList.item(1);
+	let shipLength = (draggedShip.childNodes.length-1) / 2;
+	let lastPartId;
+	let alignment;
+	let cell;
+	let notAllowed = false;
 		
-		//turn on grid
-		grid = document.getElementById('target-grid');
-		grid.classList.toggle('on-off');
+	//get alignment
+	if (draggedShip.classList.contains('vertical')) alignment = 1;
+	else alignment = 0;
 
-		//turn off btnNewGame
-		btn = document.getElementById('btnNewGame');
-		btn.classList.toggle('on-off');
+	//return if placement is not allowed
+	if (alignment == 0) {
+		lastPartId = shipLength-1 + parseInt(e.target.id) - selectedPart;
+		for (let i=0; i < shipLength-1; ++i) {
+			if (lastPartId % width == i) return notAllowed = true;
+		}
+	}
+	else {
+		lastPartId = width*(shipLength-1) + parseInt(e.target.id) - width*selectedPart;
+		if (lastPartId < width*(shipLength-1) || lastPartId > width*length-1) return notAllowed = true;
+	}
+	if (notAllowed) return;
 
-		//turn on btnSur
-		btn = document.getElementById('btnSur');
-		btn.classList.toggle('on-off');
+	//create ship//
+	p1.ships[shipsPlaced] = new Ship(shipsPlaced, shipClass, shipLength, alignment, true);
+
+	//place ship//
+	for (let i=0; i < shipLength; ++i) {
+		//get cell
+		if (alignment == 0) cell = p1.tiles[parseInt(e.target.id) - selectedPart + i];
+		else cell = p1.tiles[parseInt(e.target.id) - width*selectedPart + width*i];
+		//place ship
+		cell.classList.add('ship'); //place ship
+		cell.setAttribute('data-id', shipsPlaced); //store shipId
+	}
+	++shipsPlaced;
+
+	//turn off ship if there are none left
+	if (shipClass == 'carrier') {
+		++carriersPlaced;
+		turnOffShips(draggedShip, carriersPlaced, carrierNum);
+	}
+	if (shipClass == 'battleship') {
+		++battleshipsPlaced;
+		turnOffShips(draggedShip, battleshipsPlaced, battleNum);
+	}
+	if (shipClass == 'cruiser') {
+		++cruisersPlaced;
+		turnOffShips(draggedShip, cruisersPlaced, cruiserNum);
+	}
+	if (shipClass == 'submarine') {
+		++submarinesPlaced;
+		turnOffShips(draggedShip, submarinesPlaced, subNum);
+	}
+	if (shipClass == 'destroyer') {
+		++destroyersPlaced;
+		turnOffShips(draggedShip, destroyersPlaced, destroyerNum);
+	}
+}
+
+//event listeners//
+//game controls
+btnHost.addEventListener('click', multiplayer(true));
+btnJoin.addEventListener('click', multiplayer(false));
+btnSettings.addEventListener('click', showSettings);
+btnSur.addEventListener('click', endGame.bind(null, false));
+btnNewGame.addEventListener('click', () => {
+	if(!playflag && !readyflag) {
+		btnNewGame.classList.add('off'); //turn off btnNewGame
+		btnSettings.classList.add('off'); //turn off btnSettings
 		
 		//destroy grids
-		grid = document.getElementById('target-grid');
-		while(grid.firstChild) {
-			grid.removeChild(grid.firstChild);
-		}
-		grid = document.getElementById('ocean-grid');
-		while(grid.firstChild) {
-			grid.removeChild(grid.firstChild);
-		}
+		while(targetGrid.firstChild) targetGrid.removeChild(targetGrid.firstChild);
+		while(oceanGrid.firstChild) oceanGrid.removeChild(oceanGrid.firstChild);
 
 		//build game
 		shipNum = carrierNum + battleNum + cruiserNum + subNum + destroyerNum;
-		buildGrids();
-		setupPlayers(true);
-		setupPlayers(false);
+		buildGrid(targetGrid, false);
+		buildGrid(oceanGrid, true);
+
+		//turn on ship placement
+		turnOnShips();
+		togglePlacementBtns();
+		
+		readyflag = true; //ready for ship placement
+	}
+});
+btnQuit.addEventListener('click', () => {
+	if(onlineflag) {
+		//todo: disconnect from server
+		onlineflag = false;
+		playflag = false;
+		//.removeEventListener
+	}
+});
+
+//drag events
+placementShips.forEach(ship => {
+	ship.addEventListener('dragstart', e => draggedShip = e.target);
+	ship.addEventListener('dragend', () => draggedShip = undefined);
+	ship.addEventListener('mousedown', e => selectedPart = e.target.getAttribute('date-id'));
+});
+
+//placement controls
+btnRandom.addEventListener('click', () => {if (readyflag) randomPlacement(p1.ships, p1.tiles, true)});
+btnRotate.addEventListener('click', () => {
+	if (readyflag) {
+		placementShips.forEach(ship => ship.classList.toggle('vertical'));
+		placementContainer.classList.toggle('horizontal');
+	}
+});
+btnReset.addEventListener('click', () => {
+	if (readyflag) {
+		//empty grid
+		p1.tiles.forEach(tile => {
+			tile.removeAttribute('class'); //remove classes
+			tile.removeAttribute('data-id'); //remove id
+		});
+	
+		turnOnShips();
+	}
+});
+btnConfirm.addEventListener('click', () => {
+	if (readyflag && shipsPlaced == shipNum) {
+		//turn off ship placement
+		placementShips.forEach(ship => ship.setAttribute('draggable', 'false'));
+		togglePlacementBtns();
+		//player2 ship placement
+		if(onlineflag) {}
+		else randomPlacement(p2.ships, p2.tiles, false);
+		//turn on control buttons
+		targetGrid.classList.remove('off');
+		btnSur.classList.remove('off');
+		btnSettings.classList.remove('off');
+		//start game
+		readyflag = false;
 		playflag = true;
 	}
-}
+});
 
-function quit() {
-	if(online) {
-		
-	}
-}
-
-//settings functions//
 //grid settings
-function colAdd() {
-	if(!(gridx == 15)) {
-		const columns = document.getElementById('col');
-		columns.innerText = ++gridx;
-		//turn on col-
-		if(gridx == 11) {
-			const btn = document.getElementById('col-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off col+
-		if(gridx == 15) {
-			const btn = document.getElementById('col+');
-			btn.classList.toggle('on-off');
-		}
+btnColAdd.addEventListener('click', () => {
+	if (!(width == 16)) {
+		lblCol.innerText = ++width;
+		updateSettings(btnColAdd, btnColSub, 16, 11, width);
 	}
-}
-function colSub() {
-	if(!(gridx == 10)) {
-		const el = document.getElementById('col');
-		el.innerText = --gridx;
-		//turn on col+
-		if(gridx == 14) {
-			const btn = document.getElementById('col+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off col-
-		if(gridx == 10) {
-			const btn = document.getElementById('col-');
-			btn.classList.toggle('on-off');
-		}
+});
+btnColSub.addEventListener('click', () => {
+	if(!(width == 10)) {
+		lblCol.innerText = --width;
+		updateSettings(btnColAdd, btnColSub, 15, 10, width);
 	}
-}
-function rowAdd() {
-	if(!(gridy == 15)) {
-		const el = document.getElementById('row');
-		el.innerText = ++gridy;
-		//turn on row-
-		if(gridy == 11) {
-			const btn = document.getElementById('row-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off row+
-		if(gridy == 15) {
-			const btn = document.getElementById('row+');
-			btn.classList.toggle('on-off');
-		}
+});
+
+btnRowAdd.addEventListener('click', () => {
+	if(!(length == 16)) {
+		lblRow.innerText = ++length;
+		updateSettings(btnRowAdd, btnRowSub, 16, 11, length);
 	}
-}
-function rowSub() {
-	if(!(gridy == 10)) {
-		const el = document.getElementById('row');
-		el.innerText = --gridy;
-		//turn on row+
-		if(gridy == 14) {
-			const btn = document.getElementById('row+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off row-
-		if(gridy == 10) {
-			const btn = document.getElementById('row-');
-			btn.classList.toggle('on-off');
-		}
+});
+btnRowSub.addEventListener('click', () => {
+	if(!(length == 10)) {
+		lblRow.innerText = --length;
+		updateSettings(btnRowAdd, btnRowSub, 15, 10, length);
 	}
-}
+});
 
 //ship settings
-function carAdd() {
+btnCarAdd.addEventListener('click', () => {
 	if(!(carrierNum == 3)) {
-		const el = document.getElementById('car');
-		el.innerText = ++carrierNum;
-		//turn on car-
-		if(carrierNum == 2) {
-			const btn = document.getElementById('car-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off car+
-		if(carrierNum == 3) {
-			const btn = document.getElementById('car+');
-			btn.classList.toggle('on-off');
-		}
+		lblCar.innerText = ++carrierNum;
+		updateSettings(btnCarAdd, btnCarSub, 3, 2, carrierNum);
 	}
-}
-function carSub() {
+});
+btnCarSub.addEventListener('click', () => {
 	if(!(carrierNum == 1)) {
-		const el = document.getElementById('car');
-		el.innerText = --carrierNum;
-		//turn on car+
-		if(carrierNum == 2) {
-			const btn = document.getElementById('car+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off car-
-		if(carrierNum == 1) {
-			const btn = document.getElementById('car-');
-			btn.classList.toggle('on-off');
-		}
+		lblCar.innerText = --carrierNum;
+		updateSettings(btnCarAdd, btnCarSub, 2, 1, carrierNum);
 	}
-}
+});
 
-function batleAdd() {
+btnBatleAdd.addEventListener('click', () => {
 	if(!(battleNum == 3)) {
-		const el = document.getElementById('batle');
-		el.innerText = ++battleNum;
-		//turn on batle-
-		if(battleNum == 2) {
-			const btn = document.getElementById('batle-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off batle+
-		if(battleNum == 3) {
-			const btn = document.getElementById('batle+');
-			btn.classList.toggle('on-off');
-		}
+		lblBatle.innerText = ++battleNum;
+		updateSettings(btnBatleAdd, btnBatleSub, 3, 2, battleNum);
 	}
-}
-function batleSub() {
+});
+btnBatleSub.addEventListener('click', () => {
 	if(!(battleNum == 1)) {
-		const el = document.getElementById('batle');
-		el.innerText = --battleNum;
-		//turn on batle+
-		if(battleNum == 2) {
-			const btn = document.getElementById('batle+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off batle-
-		if(battleNum == 1) {
-			const btn = document.getElementById('batle-');
-			btn.classList.toggle('on-off');
-		}
+		lblBatle.innerText = --battleNum;
+		updateSettings(btnBatleAdd, btnBatleSub, 2, 1, battleNum);
 	}
-}
+});
 
-function cruAdd() {
+btnCruAdd.addEventListener('click', () => {
 	if(!(cruiserNum == 3)) {
-		const el = document.getElementById('cru');
-		el.innerText = ++cruiserNum;
-		//turn on cru-
-		if(cruiserNum == 2) {
-			const btn = document.getElementById('cru-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off cru+
-		if(cruiserNum == 3) {
-			const btn = document.getElementById('cru+');
-			btn.classList.toggle('on-off');
-		}
+		lblCru.innerText = ++cruiserNum;
+		updateSettings(btnCruAdd, btnCruSub, 3, 2, cruiserNum);
 	}
-}
-function cruSub() {
+});
+btnCruSub.addEventListener('click', () => {
 	if(!(cruiserNum == 1)) {
-		const el = document.getElementById('cru');
-		el.innerText = --cruiserNum;
-		//turn on cru+
-		if(cruiserNum == 2) {
-			const btn = document.getElementById('cru+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off cru-
-		if(cruiserNum == 1) {
-			const btn = document.getElementById('cru-');
-			btn.classList.toggle('on-off');
-		}
+		lblCru.innerText = --cruiserNum;
+		updateSettings(btnCruAdd, btnCruSub, 2, 1, cruiserNum);
 	}
-}
+});
 
-function submAdd() {
+btnSubmAdd.addEventListener('click', () => {
 	if(!(subNum == 3)) {
-		const el = document.getElementById('sub');
-		el.innerText = ++subNum;
-		//turn on sub-
-		if(subNum == 2) {
-			const btn = document.getElementById('sub-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off sub+
-		if(subNum == 3) {
-			const btn = document.getElementById('sub+');
-			btn.classList.toggle('on-off');
-		}
+		lblSubm.innerText = ++subNum;
+		updateSettings(btnSubmAdd, btnSubmSub, 3, 2, subNum);
 	}
-}
-function submSub() {
+});
+btnSubmSub.addEventListener('click', () => {
 	if(!(subNum == 1)) {
-		const el = document.getElementById('sub');
-		el.innerText = --subNum;
-		//turn on sub+
-		if(subNum == 2) {
-			const btn = document.getElementById('sub+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off sub-
-		if(subNum == 1) {
-			const btn = document.getElementById('sub-');
-			btn.classList.toggle('on-off');
-		}
+		lblSubm.innerText = --subNum;
+		updateSettings(btnSubmAdd, btnSubmSub, 2, 1, subNum);
 	}
-}
+});
 
-function desAdd() {
+btnDesAdd.addEventListener('click', () => {
 	if(!(destroyerNum == 3)) {
-		const el = document.getElementById('des');
-		el.innerText = ++destroyerNum;
-		//turn on des-
-		if(destroyerNum == 2) {
-			const btn = document.getElementById('des-');
-			btn.classList.toggle('on-off');
-		}
-		//turn off des+
-		if(destroyerNum == 3) {
-			const btn = document.getElementById('des+');
-			btn.classList.toggle('on-off');
-		}
+		lblDes.innerText = ++destroyerNum;
+		updateSettings(btnDesAdd, btnDesSub, 3, 2, destroyerNum);
 	}
-}
-function desSub() {
+});
+btnDesSub.addEventListener('click', () => {
 	if(!(destroyerNum == 1)) {
-		const el = document.getElementById('des');
-		el.innerText = --destroyerNum;
-		//turn on des+
-		if(destroyerNum == 2) {
-			const btn = document.getElementById('des+');
-			btn.classList.toggle('on-off');
-		}
-		//turn off des-
-		if(destroyerNum == 1) {
-			const btn = document.getElementById('des-');
-			btn.classList.toggle('on-off');
-		}
+		lblDes.innerText = --destroyerNum;
+		updateSettings(btnDesAdd, btnDesSub, 2, 1, destroyerNum);
 	}
-}
+});
 
-const btnColAdd = document.getElementById('col+'),
-btnColSub = document.getElementById('col-'),
-btnRowAdd = document.getElementById('row+'),
-btnRowSub = document.getElementById('row-'),
-btnCarAdd = document.getElementById('car+'),
-btnCarSub = document.getElementById('car-'),
-btnBatleAdd = document.getElementById('batle+'),
-btnBatleSub = document.getElementById('batle-'),
-btnCruAdd = document.getElementById('cru+'),
-btnCruSub = document.getElementById('cru-'),
-btnSubmAdd = document.getElementById('sub+'),
-btnSubmSub = document.getElementById('sub-'),
-btnDesAdd = document.getElementById('des+'),
-btnDesSub = document.getElementById('des-'),
-btnClose = document.getElementById('close'),
-
-btnHost = document.getElementById('btnHost'),
-btnJoin = document.getElementById('btnJoin'),
-btnSettings = document.getElementById('btnSettings'),
-btnSur = document.getElementById('btnSur'),
-btnNewGame = document.getElementById('btnNewGame'),
-btnQuit = document.getElementById('btnQuit');
-
-//event listeners
-btnColAdd.addEventListener('click', colAdd);
-btnColSub.addEventListener('click', colSub);
-
-btnRowAdd.addEventListener('click', rowAdd);
-btnRowSub.addEventListener('click', rowSub);
-
-btnCarAdd.addEventListener('click', carAdd);
-btnCarSub.addEventListener('click', carSub);
-
-btnBatleAdd.addEventListener('click', batleAdd);
-btnBatleSub.addEventListener('click', batleSub);
-
-btnCruAdd.addEventListener('click', cruAdd);
-btnCruSub.addEventListener('click', cruSub);
-
-btnSubmAdd.addEventListener('click', submAdd);
-btnSubmSub.addEventListener('click', submSub);
-
-btnDesAdd.addEventListener('click', desAdd);
-btnDesSub.addEventListener('click', desSub);
-
+//close settings
 btnClose.addEventListener('click', showSettings);
 
-
-btnHost.addEventListener('click', host);
-btnJoin.addEventListener('click', join);
-btnSettings.addEventListener('click', showSettings);
-btnSur.addEventListener('click', endGame.bind(null, false));
-btnNewGame.addEventListener('click', newGame);
-btnQuit.addEventListener('click', quit);
+function updateSettings(btnAdd, btnSub, max, min, setting) {
+	if(setting == max) btnAdd.classList.toggle('off'); //toggle add button
+	if(setting == min) btnSub.classList.toggle('off'); //toggle sub button
+}

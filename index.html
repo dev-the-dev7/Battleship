@@ -38,9 +38,43 @@ along with Battleship. If not, see <https://www.gnu.org/licenses/>.
             <p id="losses">Losses: 0</p>
             <p id="win-rate">Win Rate: 0%</p>
             <p id="accuracy">Accuracy: 0%</p>
+            <h2>Place Ships</h2>
+            <div class="ship-placement-container">
+                <div class="ship-container carrier off">
+                    <div data-id="0"></div>
+                    <div date-id="1"></div>
+                    <div date-id="2"></div>
+                    <div date-id="3"></div>
+                    <div date-id="4"></div>
+                </div>
+                <div class="ship-container battleship off">
+                    <div date-id="0"></div>
+                    <div date-id="1"></div>
+                    <div date-id="2"></div>
+                    <div date-id="3"></div>
+                </div>
+                <div class="ship-container cruiser off">
+                    <div date-id="0"></div>
+                    <div date-id="1"></div>
+                    <div date-id="2"></div>
+                </div>
+                <div class="ship-container submarine off">
+                    <div date-id="0"></div>
+                    <div date-id="1"></div>
+                    <div date-id="2"></div>
+                </div>
+                <div class="ship-container destroyer off">
+                    <div date-id="0"></div>
+                    <div date-id="1"></div>
+                </div>
+            </div>
+            <button id="btnRandom" class="off">Random</button>
+            <button id="btnRotate" class="off">Rotate</button>
+            <button id="btnReset" class="off">Reset</button>
+            <button id="btnConfirm" class="off">Confirm</button>
         </div>
         <div class="col-mid">
-            <table id="target-grid" class="on-off"></table>
+            <table id="target-grid" class="off"></table>
             <table id="ocean-grid"></table>
         </div>
         <div class="col-right">
@@ -50,63 +84,63 @@ along with Battleship. If not, see <https://www.gnu.org/licenses/>.
                 <div class="host"><button id="btnHost">Host</button></div>
                 <div class="join"><button id="btnJoin">Join</button></div>
                 <div class="settings"><button id="btnSettings">Settings</button></div>
-                <div class="surrender"><button id="btnSur" class="on-off">Surrender</button></div>
+                <div class="surrender"><button id="btnSur" class="off">Surrender</button></div>
                 <div class="restart"><button id="btnNewGame">New Game</button></div>
-                <div class="quit"><button id="btnQuit" class="on-off">Leave</button></div>
+                <div class="quit"><button id="btnQuit" class="off">Leave</button></div>
             </div>
         </div>
     </div>
-    <div class="setting-screen">
+    <div class="setting-screen hide">
         <div class="setting-item">  
             <button id="close">&#9746;</button>
         </div>
         <h2>Grid Size</h2>
             <div class="setting-item">
-                <h3>X-Axis</h3>
+                <h3>width</h3>
                 <p id="col">10</p>
-                <button id="col-" class="on-off">&#10148;</button>
+                <button id="col-" class="off">&#10148;</button>
                 <button id="col+">&#10148;</button>
             </div>
 
             <div class="setting-item">
-                <h3>Y-Axis</h3>
+                <h3>Length</h3>
                 <p id="row">10</p>
-                <button id="row-" class="on-off">&#10148;</button>
+                <button id="row-" class="off">&#10148;</button>
                 <button id="row+">&#10148;</button>
             </div>
         <h2>Number of ships</h2>
             <div class="setting-item">
                 <h3>Aircraft Carrier</h3>
                 <p id="car">1</p>
-                <button id="car-" class="on-off">&#10148;</button>
+                <button id="car-" class="off">&#10148;</button>
                 <button id="car+">&#10148;</button>
             </div>
 
             <div class="setting-item">
                 <h3>Battleship</h3>
                 <p id="batle">1</p>
-                <button id="batle-" class="on-off">&#10148;</button>
+                <button id="batle-" class="off">&#10148;</button>
                 <button id="batle+">&#10148;</button>
             </div>
             
             <div class="setting-item">
                 <h3>Cruiser</h3>
                 <p id="cru">1</p>
-                <button id="cru-" class="on-off">&#10148;</button>
+                <button id="cru-" class="off">&#10148;</button>
                 <button id="cru+">&#10148;</button>
             </div>
 
             <div class="setting-item">
                 <h3>Submarine</h3>
                 <p id="sub">1</p>
-                <button id="sub-" class="on-off">&#10148;</button>
+                <button id="sub-" class="off">&#10148;</button>
                 <button id="sub+">&#10148;</button>
             </div>
 
             <div class="setting-item">
                 <h3>Destroyer</h3>
                 <p id="des">1</p>
-                <button id="des-" class="on-off">&#10148;</button>
+                <button id="des-" class="off">&#10148;</button>
                 <button id="des+">&#10148;</button>
             </div>
     </div>
