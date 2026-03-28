@@ -1,0 +1,48 @@
+*, *::after, *::before {
+	box-sizing: border-box;
+}
+
+:root {
+	--cell-size: 20px;
+	--mark-size: calc(var(--cell-size) * .8);
+
+	/* Primary palette */
+	--accent:       #00c8b8;
+	--accent-dim:   #0c7b93;
+	--panel-bg:     rgba(5, 15, 30, 0.82);
+	--panel-border: rgba(0, 200, 184, 0.22);
+	--text:         #ddeaf4;
+	--text-muted:   #6a8fa8;
+
+	/* Badge / status colors */
+	--color-host:       #ffd54f;
+	--color-danger:     #ff4444;
+	--color-danger-soft: #ff6b6b;
+}
+
+body {
+	font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+	background-image: url("../assets/warship-caught-in-a-storm.jpg");
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	background-color: #060e1a;
+	margin: 0;
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	color: var(--text);
+}
+
+#app {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.hide {
+	display: none !important;
+}

@@ -1,0 +1,73 @@
+/* ---- Header ---- */
+
+header {
+	width: 80%;
+	min-width: 480px;
+	margin: 12px auto 0;
+	padding: 16px 32px;
+	background: rgba(5, 15, 30, 0.7);
+	border: 3px solid var(--accent-dim);
+	border-bottom: none;
+	border-radius: 12px 12px 0 0;
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+header img {
+	height: 56px;
+}
+
+/* ---- Game panels ---- */
+
+.row {
+	display: flex;
+	justify-content: space-around;
+	width: 80%;
+	margin: 0 auto;
+	flex: 1;
+	min-height: 0;
+	padding: 12px 0;
+}
+
+.col-left,
+.col-mid,
+.col-right {
+	background: var(--panel-bg);
+	border: 3px solid var(--accent-dim);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	text-align: center;
+	margin: 0 6px;
+	padding: 10px 8px;
+	color: var(--text);
+	border-radius: 8px;
+	overflow-y: auto;
+}
+
+.col-left,
+.col-right {
+	flex: 1;
+	min-width: 180px;
+}
+
+.col-right {
+	display: flex;
+	flex-direction: column;
+}
+
+.col-left button {
+	width: 45px;
+	font-size: 0.6em;
+	padding: 2px;
+}
+
+.col-mid {
+	flex: auto;
+}
+
+@media screen and (max-width: 750px) {
+	.col-left { display: none; }
+}

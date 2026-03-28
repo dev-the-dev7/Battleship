@@ -1,36 +1,90 @@
 # Battleship
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
-![release](https://img.shields.io/badge/release-1.0.0-orange)
 
-> Note:
-I plan to add an online function soon, so some buttons have no use as of yet. I'm using this project as a learning experience, so I will not be accepting any pull requests until I finish the online section. I want to be able to do this on my own, so please bear with me until that part is complete. There are more features I plan to add, like being able to place your own ships, but I want to make sure the online is done first as I want to get familiar with writing server-side code.
+A multiplayer Battleship game playable in the browser. You can play solo against a CPU opponent or host an online game for up to 4 players. No accounts, no installs — just share a room code and you're in.
 
-**Battleship** is a 2-player board game where each player gets their own ships to place on their ocean grid. They're five different types of ships, each taking up a different amount of space on the grid. Each player takes shots at each other's ships without knowing the location of their opponent's ships. If all the parts of a ship are hit, the ship sinks. The object of the game is to sink all of your opponent's ships before they sink yours. You can customize your game by increasing the size of the grids and the number of ships each player has. You can also view game statistics, including wins, losses, win rate, and accuracy.
+---
 
-**User interfaces**
-1. Here, we can see the game statistics on the left panel, the game in the center panel, and the controls on the right panel.
-![Image of Battleship start page](https://i.imgur.com/bbkCotq.png)
-2. To get started, press the 'New Game' button. Your ships will be placed randomly on the bottom, and you can then fire at your opponent by clicking on a cell on the enemy's grid.
-![Image of Battleship new game](https://i.imgur.com/iQjHOCz.png)
-3. Both players take turns until one of them destroys all of their opponent's ships.
-![Image of Battleship shoot](https://i.imgur.com/uFeTxlB.png)
-4. A notification is sent to the player when a ship is destroyed, or when the game is over.
-![Image of Battleship notification](https://i.imgur.com/Xk7vlGl.png)
-5. In the settings, you can increase the grid size and the number of ships. The grid size ranges from 10x10 to 15x15, and the number of ships per ship type range from 1 to 3.
-![Image of Battleship settings](https://i.imgur.com/BuPMTX1.png)
-6. If a player wishes to end the game early, they can click the 'Surrender' button.
-![Image of Battleship settings aplied](https://i.imgur.com/UoFOoD2.png)
+## Features
 
-## Contact for questions
+**Local vs CPU**
+- Place your ships manually via drag-and-drop, or hit the random button to let the game place them for you
+- Rotate ships before placing with the rotate button
+- Three AI difficulty levels: easy (pure random shots), medium (hunts after a hit), and hard (uses probability to target the most likely ship locations)
+- Up to 4 players total (1 to 3 CPU opponents)
 
-Devin Vella – devinvella@gmail.com
+**Online Multiplayer**
+- Host a game and share the 6-character room code with friends
+- 2 to 4 players per room, with CPU slots filling any empty spots
+- If a player disconnects mid-game, a CPU automatically takes over their slot so the game keeps going
+- Dropped out? Rejoin the same room and pick up where you left off
+- The host can kick players from the waiting room and controls game settings
 
-Distributed under the GNU General Public License version 3. See ``LICENSE`` for more information.
+**Customisation**
+- Grid size: 10×10 up to 15×15
+- Choose how many of each ship type to include (carriers, battleships, cruisers, submarines, destroyers)
+- First-turn setting: random, winner goes first, or loser goes first
+- CPU difficulty applies to all bots in the game
 
-## Contributing
+**Profiles**
+- Set your display name and pick a colour before joining
+- Upload a profile picture — the game will let you crop it to a circle
+- Your profile is saved locally so it carries over between sessions
 
-1. Fork it
-2. Create your feature branch (`git checkout -b feature/fooBar`)
-3. Commit your changes (`git commit -m 'Add some fooBar'`)
-4. Push to the branch (`git push origin feature/fooBar`)
-5. Create a new Pull Request
+**Stats**
+- Tracks shots fired, hits, accuracy, wins, and losses for the current session
+
+---
+
+## Getting Started
+
+You'll need [Node.js](https://nodejs.org) installed.
+
+```bash
+# Clone the repo
+git clone https://github.com/dev-the-dev7/battleship.git
+cd battleship
+
+# Install server dependencies
+cd server
+npm install
+
+# Start the server
+node server.js
+```
+
+Then open your browser and go to `http://localhost:3000`.
+
+That's it — the server serves the frontend too, so there's no separate build step or dev server needed.
+
+---
+
+## How to Play
+
+**Local game:**
+1. Click **New Game** to start
+2. Drag ships from the sidebar onto your grid, or click **Random** to place them automatically
+3. Click **Confirm** when you're happy with your placement
+4. Click any cell on the enemy grid to fire — you and the CPU take turns until one side is sunk
+5. Use the **Settings** button to change the grid size, ship counts, or difficulty before starting a new game
+
+**Online game:**
+1. Set your name and colour on the lobby screen
+2. Click **Host** to create a room, or enter a room code and click **Join**
+3. Once everyone is in the waiting room, the host clicks **Start Game**
+4. All players are taken to the game screen where they place their ships independently
+5. Once everyone confirms, the game begins — the server handles turn order and validates all shots
+
+---
+
+## Room Codes
+
+Room codes are 6 characters (e.g. `X4KN2P`). Share it however you like — chat, Discord, whatever. Codes are case-insensitive. Rooms close automatically a couple of minutes after a game ends if fewer than two humans are still connected.
+
+---
+
+## Contact
+
+Devin Vella — devin.vella.personal@outlook.com
+
+Distributed under the GNU General Public License v3. See `LICENSE` for details.

@@ -1,0 +1,99 @@
+/* ---- Room code display ---- */
+
+.room-code {
+	font-family: 'Courier New', monospace;
+	font-size: 2.2em;
+	font-weight: bold;
+	letter-spacing: 0.3em;
+	background: rgba(0, 30, 40, 0.7);
+	border: 1px solid var(--accent-dim);
+	border-radius: 8px;
+	padding: 10px 20px;
+	color: var(--accent);
+	text-shadow: 0 0 10px rgba(0, 200, 184, 0.4);
+}
+
+/* ---- Waiting room player slots ---- */
+
+.waiting-slots {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 12px 0;
+}
+
+.waiting-slot {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 16px;
+	border-radius: 8px;
+	background: rgba(0, 20, 35, 0.55);
+	border: 1px solid var(--panel-border);
+	font-size: 0.9em;
+}
+
+.waiting-slot__dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.waiting-slot--joined .waiting-slot__dot {
+	background: var(--accent);
+	box-shadow: 0 0 6px rgba(0, 200, 184, 0.6);
+}
+
+.waiting-slot--empty .waiting-slot__dot {
+	background: rgba(100, 120, 140, 0.4);
+}
+
+.waiting-slot[data-my-slot] {
+	cursor: pointer;
+}
+
+.waiting-slot--joined .waiting-slot__name {
+	color: var(--text);
+}
+
+.waiting-slot--empty .waiting-slot__name {
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+.waiting-slot__you {
+	font-size: 0.85em;
+	color: var(--accent);
+	font-style: normal;
+}
+
+.waiting-slot__host {
+	font-size: 0.65em;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	padding: 1px 5px;
+	border-radius: 4px;
+	border: 1px solid var(--color-host);
+	color: var(--color-host);
+}
+
+.waiting-slot__kick {
+	margin-left: auto;
+	background: none;
+	border: 1px solid rgba(255, 68, 68, 0.5);
+	color: var(--color-danger-soft);
+	font-size: 0.7em;
+	font-weight: 700;
+	padding: 1px 6px;
+	border-radius: 4px;
+	width: auto;
+	cursor: pointer;
+	transition: background 0.15s, color 0.15s;
+}
+
+.waiting-slot__kick:hover {
+	background: rgba(255, 68, 68, 0.2);
+	color: var(--color-danger);
+	border-color: var(--color-danger);
+}

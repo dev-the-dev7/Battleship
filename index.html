@@ -1,155 +1,23 @@
-﻿<!--Copyright © 2020 Devin Vella-->
-<!--
-This file is part of Battleship.
-
-Battleship is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Battleship is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Battleship. If not, see <https://www.gnu.org/licenses/>.
--->
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="styles.css" rel="stylesheet">
-    <script src="battleship.js" defer></script>
     <title>Battleship</title>
-    <!-- Font Awesome -->
+    <link href="styles/base.css" rel="stylesheet">
+    <link href="styles/layout.css" rel="stylesheet">
+    <link href="styles/panel.css" rel="stylesheet">
+    <link href="styles/grid.css" rel="stylesheet">
+    <link href="styles/game.css" rel="stylesheet">
+    <link href="styles/settings.css" rel="stylesheet">
+    <link href="styles/lobby.css" rel="stylesheet">
+    <link href="styles/waiting.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" rel="stylesheet" >
+    <script type="module" src="/src/main.js"></script>
 </head>
 <body>
-    <header><img src="./assets/title.png" alt="Battleship"></header>
-    <div class="row">
-        <div class="col-left">
-            <h2>Game Stats</h2>
-            <p id="wins">Wins: 0</p>
-            <p id="losses">Losses: 0</p>
-            <p id="win-rate">Win Rate: 0%</p>
-            <p id="accuracy">Accuracy: 0%</p>
-            <h2>Place Ships</h2>
-            <div class="ship-placement-container">
-                <div class="ship-container carrier off">
-                    <div data-id="0"></div>
-                    <div date-id="1"></div>
-                    <div date-id="2"></div>
-                    <div date-id="3"></div>
-                    <div date-id="4"></div>
-                </div>
-                <div class="ship-container battleship off">
-                    <div date-id="0"></div>
-                    <div date-id="1"></div>
-                    <div date-id="2"></div>
-                    <div date-id="3"></div>
-                </div>
-                <div class="ship-container cruiser off">
-                    <div date-id="0"></div>
-                    <div date-id="1"></div>
-                    <div date-id="2"></div>
-                </div>
-                <div class="ship-container submarine off">
-                    <div date-id="0"></div>
-                    <div date-id="1"></div>
-                    <div date-id="2"></div>
-                </div>
-                <div class="ship-container destroyer off">
-                    <div date-id="0"></div>
-                    <div date-id="1"></div>
-                </div>
-            </div>
-            <button id="btnRandom" class="off">Random</button>
-            <button id="btnRotate" class="off">Rotate</button>
-            <button id="btnReset" class="off">Reset</button>
-            <button id="btnConfirm" class="off">Confirm</button>
-        </div>
-        <div class="col-mid">
-            <table id="target-grid" class="off"></table>
-            <table id="ocean-grid"></table>
-        </div>
-        <div class="col-right">
-            <div id="ply1" class="ply-card"><img src="./assets/default_pic.png" alt="player 1"> UserName</div>
-            <div id="ply2" class="ply-card"><img src="./assets/glad_bot.jpg" alt="player 2"> Computer</div>
-            <div class="btn-group">
-                <div class="host"><button id="btnHost">Host</button></div>
-                <div class="join"><button id="btnJoin">Join</button></div>
-                <div class="settings"><button id="btnSettings">Settings</button></div>
-                <div class="surrender"><button id="btnSur" class="off">Surrender</button></div>
-                <div class="restart"><button id="btnNewGame">New Game</button></div>
-                <div class="quit"><button id="btnQuit" class="off">Leave</button></div>
-            </div>
-        </div>
-    </div>
-    <div class="setting-screen hide">
-        <div class="setting-item">  
-            <button id="close">&#9746;</button>
-        </div>
-        <h2>Grid Size</h2>
-            <div class="setting-item">
-                <h3>width</h3>
-                <p id="col">10</p>
-                <button id="col-" class="off">&#10148;</button>
-                <button id="col+">&#10148;</button>
-            </div>
-
-            <div class="setting-item">
-                <h3>Length</h3>
-                <p id="row">10</p>
-                <button id="row-" class="off">&#10148;</button>
-                <button id="row+">&#10148;</button>
-            </div>
-        <h2>Number of ships</h2>
-            <div class="setting-item">
-                <h3>Aircraft Carrier</h3>
-                <p id="car">1</p>
-                <button id="car-" class="off">&#10148;</button>
-                <button id="car+">&#10148;</button>
-            </div>
-
-            <div class="setting-item">
-                <h3>Battleship</h3>
-                <p id="batle">1</p>
-                <button id="batle-" class="off">&#10148;</button>
-                <button id="batle+">&#10148;</button>
-            </div>
-            
-            <div class="setting-item">
-                <h3>Cruiser</h3>
-                <p id="cru">1</p>
-                <button id="cru-" class="off">&#10148;</button>
-                <button id="cru+">&#10148;</button>
-            </div>
-
-            <div class="setting-item">
-                <h3>Submarine</h3>
-                <p id="sub">1</p>
-                <button id="sub-" class="off">&#10148;</button>
-                <button id="sub+">&#10148;</button>
-            </div>
-
-            <div class="setting-item">
-                <h3>Destroyer</h3>
-                <p id="des">1</p>
-                <button id="des-" class="off">&#10148;</button>
-                <button id="des+">&#10148;</button>
-            </div>
-    </div>
-    <footer>
-        <ul>
-            <li><a href="https://github.com/dev-the-dev7" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/dv13/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a></li>
-        </ul>
-		<small>Copyright &copy; 2020 Devin Vella • Web Developer</small>
-    </footer>
+    <noscript>This game requires JavaScript.</noscript>
+    <div id="app"></div>
 </body>
 </html>

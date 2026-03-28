@@ -1,0 +1,65 @@
+/* ---- Shared panel card ---- */
+/* Used by lobby, waiting room, and any future full-page panel view. */
+
+.panel {
+	background: var(--panel-bg);
+	border: 3px solid var(--accent-dim);
+	border-top: none;
+	border-radius: 0 0 12px 12px;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	padding: 36px 44px;
+	text-align: center;
+	color: var(--text);
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+/* Waiting room variant — tighter padding, scrollable */
+.lobby--waiting .panel {
+	padding: 28px 44px;
+	gap: 8px;
+}
+
+.panel__heading {
+	margin: 0 0 20px;
+	font-size: 1.3em;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	color: var(--accent);
+	text-transform: uppercase;
+}
+
+.panel__label {
+	margin: 0;
+	font-size: 0.88em;
+	color: var(--text-muted);
+}
+
+.panel__btn {
+	width: 100%;
+	padding: 12px 10px;
+	font-size: 0.95em;
+	max-width: 380px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.panel__btn--secondary {
+	background: transparent;
+	color: var(--text-muted);
+	border-color: rgba(100, 130, 160, 0.35);
+}
+
+.panel__btn--secondary:hover {
+	background: rgba(100, 130, 160, 0.15);
+	color: var(--text);
+}
+
+.panel__status {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: 0.85em;
+}
