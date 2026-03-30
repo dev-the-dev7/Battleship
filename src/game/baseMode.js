@@ -379,7 +379,7 @@ export function createBase(ctx) {
 			? reviewIndex : 1;
 		ctx.targetIndex = startIndex;
 		showReviewGrid(startIndex);
-		ctx.targetGridEl.classList.remove('off');
+		ctx.targetGridEl.classList.add('off');
 		if (ctx.players.length > 2) {
 			ctx.targetNavEl.classList.remove('hide');
 			ctx.btnPrevTarget.classList.remove('hide');

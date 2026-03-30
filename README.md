@@ -1,7 +1,9 @@
-# Battleship
-![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
+# Online Battleship Web Application
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 A multiplayer Battleship game playable in the browser. You can play solo against a CPU opponent or host an online game for up to 4 players. No accounts, no installs — just share a room code and you're in.
+
+![Gameplay](assets/gameplay.gif)
 
 ---
 
@@ -33,6 +35,15 @@ A multiplayer Battleship game playable in the browser. You can play solo against
 
 **Stats**
 - Tracks shots fired, hits, accuracy, wins, and losses for the current session
+
+---
+
+## Built With
+
+- Vanilla JavaScript
+- Node.js + Express
+- WebSockets (ws)
+- HTML / CSS
 
 ---
 
@@ -85,6 +96,6 @@ Room codes are 6 characters (e.g. `X4KN2P`). Share it however you like — chat,
 
 ## Contact
 
-Devin Vella — devin.vella.personal@outlook.com
+Devin Vella — devin.vella.career@outlook.com
 
-Distributed under the GNU General Public License v3. See `LICENSE` for details.
+Distributed under the MIT License. See `LICENSE` for details.
